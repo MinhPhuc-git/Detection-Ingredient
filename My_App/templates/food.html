@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{%static 'css/food.css'%}?v={{ now|date:'U' }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Món Ăn</title>
+</head>
+
+<body>
+    <div id="container">
+        {%include 'header.html'%}
+        <div id="container-content">
+            <div id="content-intro">
+                {% if main_recipe %}
+                <div id="content-left">
+                    <div class="img-container">
+                        <img src="{% static 'img_dishes/' %}{{ main_recipe.tenAnh }}.png" alt="">
+                    </div>
+                </div>
+                <div id="content-right">
+                    <h1 class="title">Thành phần</h1>
+
+                    <p class="detail"><span style="font-weight: bold;">Nguyên liệu:</span>
+                        {%for ingredient in main_recipe.thanhPhan%}
+                        {{ingredient}}{{','}}
+                        {% endfor %}
+                    </p>
+                    <p class="detail"><span style="font-weight: bold;">Gia vị:</span>
+                        {%for salt in main_recipe.giaVi%}
+                        {{ salt }} {{','}}
+                        {%endfor%}
+                    </p>
+                    <p class="detail"><span style="font-weight: bold;">Độ khó:</span> {{ main_recipe.doKho }} <i class="fa-solid fa-stopwatch" style="opacity: 60%;"></i> </p>
+                    <p class="detail"><span style="font-weight: bold;">Thời gian:</span> {{ main_recipe.thoiGian }} <i class="fa-solid fa-chart-simple" style="opacity: 60%;"></i></p>
+                </div>
+            </div>
+            <div id="content-footer">
+                <div class="text">
+                    <h1 class="title">Cách chế biến: <span style="color: rgb(65, 139, 65);">{{main_recipe.tenMonAn}}</span></h1>
+                    <ol>
+                        {%for ingredient in main_recipe.thanhPhan%}
+                        <li>{{ main_recipe.tenMonAn }}</li>
+                        <p>
+                            {%for salt in main_recipe.giaVi%}
+                            {{ salt }}
+                            {%endfor%}
+                        </p>
+                        {% endfor %}
+
+                    </ol>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <div id="menu">
+            <div class="button-container">
+                <button>Tất cả</button>
+                <button>Món mặn</button>
+                <button>Món chay</button>
+                <button>Canh</button>
+                <button>Gỏi</button>
+            </div>
+            <div class="filter-box">
+                <div class="left">
+
+                    <i class="fa-solid fa-filter"></i><label for="filter-select">Lọc theo:</label>
+                    <select id="filter-select">
+                        <option value="time">Thời gian</option>
+                        <option value="name">Tên món</option>
+                    </select>
+                </div>
+                <div class="right">
+                    <p>Hiển thị 24 công thức</p>
+                </div>
+            </div>
+        </div>
+        <div id="content">
+            {% if object_Recipe %}
+            <p>{{ object_Recipe.tenMonAn }}</p>
+            <img src="{% static 'img_dishes/{{ object_Recipe.tenAnh }}'%}" alt="">
+            {% endif %}
+        </div>
+        <div id="list-recipe">
+            {% for recipe in page_obj %}
+            <div class="recipe">
+                <img src="{% static 'img_dishes/' %}{{ recipe.tenAnh }}.png" alt="">
+                <div class=" title">
+                <h3 style="color: rgba(75, 238, 43, 1);">Món {{ recipe.loaiMonAn }}</h3>
+                <h2 style="padding-left: 3%;">{{ recipe.tenMonAn }}</h2>
+            </div>
+            <div class="footer">
+                <p><i class="fa-solid fa-stopwatch"></i> {{ recipe.thoiGian }}</p>
+                <p><i class="fa-solid fa-chart-simple"></i> {{ recipe.doKho }}</p>
+            </div>
+            <a href="?id={{ recipe.id }}#container-content">
+                <button>Chi tiết</button>
+            </a>
+        </div>
+        {%endfor%}
+    </div>
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}&id={{ main_recipe.id }}">&laquo;</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+        <a href="?page={{ num }}&id={{ main_recipe.id }}" class="{% if page_obj.number == num %}active{% endif %}">
+            {{ num }}
+        </a>
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&id={{ main_recipe.id }}">&raquo;</a>
+        {% endif %}
+    </div>
+    {%include 'footer.html'%}
+    </div>
+
+</body>
+<script>
+    document.addEventListener('click', function (e) {
+        const navLink = e.target.closest('.pagination a');
+        if (!navLink) return;
+
+        e.preventDefault();
+        const url = navLink.href;
+
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                const newContent = doc.querySelector('#list-recipe').innerHTML;
+                document.querySelector('#list-recipe').innerHTML = newContent;
+
+                const newPagination = doc.querySelector('.pagination').innerHTML;
+                document.querySelector('.pagination').innerHTML = newPagination;
+
+                window.history.pushState({}, '', url);
+            })
+            .catch(err => console.warn('Có lỗi khi tải trang:', err));
+    });
+</script>
+
+</html>

@@ -1,0 +1,41 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/footer.css' %}?v={{ now|date:'U' }}">
+
+<div id="footer">
+    <div class="left">
+        <div class="title">
+            <h2 style="color: rgb(47, 151, 27);;">GreenFood</h2>
+        </div>
+        <div class="info">
+            <p>Mang nguồn cảm hứng tới không gian bếp, hướng dẫn <br> bạn nấu ăn ngay cả khi bạn không biết phải
+                nấu gì.</p>
+            <span>@2026 - AI Chef</span>
+        </div>
+    </div>
+    <div class="right">
+        <div class="title">
+            <h2>Thông tin liên hệ</h2>
+        </div>
+        <div class="info">
+            <div class="row">
+                <span class="label">Gmail:</span>
+                <span class="value"><a href="">GreenFood@gmail.com</a></span>
+            </div>
+
+            <div class="row">
+                <span class="label">Phone:</span>
+                <span class="value">673414124125</span>
+            </div>
+
+            <div class="row">
+                <span class="label">Facebook:</span>
+                <span class="value"><a href="">GreenFood - Thực phẩm xanh</a></span>
+            </div>
+
+            <div class="row">
+                <span class="label">Address:</span>
+                <span class="value">6123/14/12 Hà Nội</span>
+            </div>
+        </div>
+    </div>
+</div>

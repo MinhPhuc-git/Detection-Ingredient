@@ -1,0 +1,120 @@
+#container {
+    width: 100%;
+    height: 100px;
+    margin: 0;
+}
+
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 5%;
+    padding-right: 10%;
+    background-color: rgba(136, 243, 122, 0.363) ;
+    box-shadow: 4px 5px 20px rgba(102, 230, 102, 0.767);
+}
+
+.right,
+.middle,
+.left {
+    display: flex;
+    gap: 10px;
+}
+
+.middle {
+    display: flex;
+    gap: 30px;
+}
+
+#header h2 {
+    display: flex;
+    justify-content: center;
+}
+
+#header a {
+    text-decoration: none;
+    color: black;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#header .left img {
+    width: 28px;
+    height: 27px;
+}
+
+#header .right img {
+    width: 30px;
+    height: 28px;
+}
+
+#header .search {
+    background-color: rgba(75, 238, 43, 0.05);
+    border-color: rgba(75, 238, 43, 1);
+    border-radius: 20px;
+    outline: 1px solid rgba(75, 238, 43, 1);
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+#header .search img {
+    height: 13px;
+    width: 13px;
+    padding-left: 10px;
+}
+
+.search input {
+    all: unset;
+    padding-left: 5px;
+}
+
+#header .account {
+    background-color: rgba(75, 238, 43, 1);
+    border-radius: 20px;
+    height: 40px;
+    width: 150px;
+    border: 0;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#header .account:hover,
+#header .cart:hover {
+    cursor: pointer;
+    background-color: rgb(50, 192, 21);
+}
+
+#header .account img {
+    height: 14px;
+    width: 14px;
+    padding-right: 3px;
+}
+
+#header .cart {
+    background-color: rgb(163, 219, 152);
+    border: 0;
+    height: 42px;
+    width: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 40px;
+
+}
+
+#header .sales {
+    color: rgba(75, 238, 43, 1);
+}
+
+#header .middle a:hover {
+    color: rgb(50, 192, 21);
+}
+
+#header .cart img {
+    height: 20px;
+    width: 20px;
+}

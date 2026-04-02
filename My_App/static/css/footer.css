@@ -1,0 +1,39 @@
+#footer{
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-between;
+    height: 300px;
+    background-color: rgba(197, 202, 197, 0.274);
+    height: auto;
+}
+
+#footer .title{
+    border-bottom: 1px solid black;
+    padding-bottom: 10px;
+    font-size: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+ 
+#footer .right, #footer .left {
+    margin: 20px 100px;
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
+}
+
+#footer .row {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+#footer .label {
+    width: 100px;
+    font-weight: bold;
+}
+
+#footer .value {
+    flex: 1;
+}
+#footer p{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}

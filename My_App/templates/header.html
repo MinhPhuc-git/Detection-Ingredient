@@ -1,0 +1,23 @@
+{%load static%}
+<link rel="stylesheet" href="{% static 'css/header.css' %}?v=1">
+<div id="header">
+    <div class="left">
+        <h2 style="color: rgba(75, 238, 43, 1);"><img src="{% static 'icon/leaf.png' %}" alt=""> GreenFood</h2>
+    </div>
+    <div class="middle">
+        <a href="{% url 'index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Cửa hàng</a>
+        <a href="">Thực Phẩm</a>
+        <a href="{% url 'predict_model' %}" class="{% if request.resolver_match.url_name == 'recipe' %}active{% endif %}">Công Thức</a>
+        <a href="{% url 'food' %}">Món Ăn</a>
+        <a href="" class="sales">Khuyến Mãi</a>
+    </div>
+    <div class="right">
+        <div class="search">
+            <img src="{% static 'icon/search.png' %}" alt="">
+            <input type="text" name="" id="" placeholder="Tìm kiếm thực phẩm...">
+        </div>
+        <a href="{% url 'login' %}" class="account"><img src="{% static 'icon/human.png' %}" alt="">Tài
+            khoản</a>
+        <button class="cart"><img src="{% static 'icon/cart.png' %}" alt=""></button>
+    </div>
+</div>

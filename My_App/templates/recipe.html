@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/recipe_style.css' %}?v={{ now|date:'U' }}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}?v={{ now|date:'U' }}">
+    <title>Công thức</title>
+
+</head>
+
+<body>
+    {% include 'header.html' %}
+    <div id="container">
+        <div id="content">
+            <div id="content-intro">
+                <div id="content-intro-left"> <img src="{% static 'img/intro.png'%}" alt="">
+                </div>
+                <div id="content-intro-right">
+                    <h2>Smart Cooking</h2>
+                    <h1>Nấu ăn thông minh cùng<br><span style="color:  rgba(75, 238, 43, 1);">AI Chef</span></h1>
+                    <p>Hướng dẫn nấu ăn dựa vào các nguyên liệu có sẵn của bạn</p>
+                    <button>Bắt đầu ngay</button>
+                </div>
+            </div>
+            <div id="content-model">
+                <div id="content-screen">
+                    <div class="title">
+                        <h2 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">Tải ảnh nguyên
+                            liệu </h2>
+                        Kéo thả ảnh nguyên liệu của bạn vào đây
+                    </div>
+                    <label for="upload">
+                        <div id="center">
+                            <img src="{% static 'icon/camera.png'%}" alt="">
+                            <p class="row1">Hỗ trợ PNG,JPG (Tối đa 10MB)</p>
+                            <span class="row2">Chụp rõ các loại rau củ, thực phẩm
+                            </span>
+                        </div>
+                    </label>
+                </div>
+                <form action="{% url 'predict_model' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="image_upload" id="upload" accept="image/*" hidden
+                        onchange="this.form.submit()">
+                </form>
+                <div id="content-analyst">
+                    <div class="title">
+                        <h2 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">Đang phân tích</h2>
+                        <span>AI đã phân tích {{numberOf_ingredient}} nguyên liệu</span>
+                    </div>
+
+                    <div class="result">
+                        {% for name, count in count_ingredient.items %}
+                        <p>
+                            <img src="{% static 'icon/clock.png' %}" alt="">{{ name }} - {{ count }}
+                        </p>
+                        {% endfor %}
+                    </div>
+                    <button>+ Thêm nguyên liệu thủ công</button>
+                </div>
+            </div>
+            <div class="header-menu">
+                <h2>Gợi ý món ăn cho bạn</h2>
+            </div>
+            <div id="content-menu">
+                <div id="content-left">
+                    {% if first %}
+                    <div class="food">
+                        <img src="{% static 'img_dishes/' %}{{ first.tenAnh }}.png" alt="">
+                        <span class="predict_name"> {{ first.tenMonAn }} </span>
+                    </div>
+                    <div class="footer_menu">
+                        <img src="{% static 'icon/clock.png'%}" alt=""> <span class="predict_name"> {{ first.thoiGian }}
+                        </span>
+                        <img src="{% static 'icon/knife.png'%}" alt=""> <span class="predict_name"> {{ first.doKho }}
+                        </span>
+                        <a href="{% url 'food' %}?id={{ first.id }}" class="detail">Xem chi tiết</a>
+                    </div>
+                    {% endif %}
+                </div>
+                <div id="content-mid">
+                    {% if second %}
+                    <div class="food">
+                        <img src="{% static 'img_dishes/' %}{{ second.tenAnh }}.png" alt=""> <span class="predict_name">
+                            {{second.tenMonAn}} </span>
+                    </div>
+                    <div class="footer_menu">
+                        <img src="{% static 'icon/clock.png'%}" alt=""> <span class="predict_name"> {{second.thoiGian}}
+                        </span>
+                        <img src="{% static 'icon/knife.png'%}" alt=""> <span class="predict_name"> {{second.doKho}}
+                        </span>
+                        <a href="{% url 'food' %}?id={{ second.id }}" class="detail">Xem chi tiết</a>
+                    </div>
+                    {% endif %}
+                </div>
+                <div id="content-right">
+                    {% if third %}
+                    <div class="food">
+                        <img src="{% static 'img_dishes/' %}{{ third.tenAnh }}.png" alt=""> <span class="predict_name">
+                            {{third.tenMonAn}} </span>
+                    </div>
+                    <div class="footer_menu">
+                        <img src="{% static 'icon/clock.png'%}" alt=""> <span class="predict_name"> {{third.thoiGian}}
+                        </span>
+                        <img src="{% static 'icon/knife.png'%}" alt=""> <span class="predict_name"> {{third.doKho}}
+                        </span>
+                        <a href="{% url 'food' %}?id={{ third.id }}" class="detail">Xem chi tiết</a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="bottom">
+                <a href="{% url 'food' %}">Khám phá thêm hơn {{ recipe_Number }} công thức khác</a>
+            </div>
+        </div>
+        {% include 'footer.html'%}
+    </div>
+</body>
+
+</html>

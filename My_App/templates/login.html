@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông tin đăng nhập</title>
+    <script src="/ML_Food/My_App/static/js/login.js" defer></script>
+    <link rel="icon" href="{% static 'icon/leaf.png' %}">
+    <link rel="stylesheet" href="{% static 'css/login_style.css' %}?v=2">
+</head>
+
+<body>
+    <div id="container">
+        <div class="banner">
+            <div class="left">
+                <h2 style="color: rgba(75, 238, 43, 1);"><img src="{% static 'icon/leaf.png' %}" alt=""> GreenFood</h2>
+            </div>
+            <div class="right">
+                <a href="{% url 'index' %}">Cửa hàng</a>
+                <a href="{%url 'predict_model' %}">Công thức</a>
+                <a href="">Vị trí</a>
+                <a href="" class="sign-up"> <span class="a-sign-up">Đăng ký</span></a>
+            </div>
+        </div>
+        <div class="log-wrapper" id="log">
+            <div class="log">
+                <div class="log-head">
+                    <h1>Đăng nhập</h1>
+                    <p>Vui lòng nhập thông tin đăng nhập</p>
+                </div>
+                <form action="">
+                    <div class="log-body">
+                        <div class="log-body-username">
+                            <label>Tài khoản</label>
+                            <input type="text" placeholder="Username">
+                        </div>
+                        <div class="log-body-password">
+                            <label>Mật khẩu</label>
+                            <input type="password" name="" id="" placeholder="Password">
+                        </div>
+                        <button class="btn-log">Đăng nhập</button>
+                    </div>
+                </form>
+                <div class="line">
+                    Hoặc đăng nhập bằng
+                </div>
+                <div class="btn-option">
+                    <button> <img src="{% static 'icon/google.png' %}" alt="">Google</button>
+                    <button> <img src="{% static 'icon/facebook.png' %}" alt="">Facebook</button>
+                </div>
+                <div class="sign-up">
+                    <p>Không có tài khoản? </p>
+                    <a id="btn-show-reg">Tạo tài khoản</a>
+                </div>
+            </div>
+        </div>
+        <div class="reg-wrapper hidden" id="reg">
+            <div class="sign-in">
+                <a id="btn-show-log">Đã có tài khoản</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
