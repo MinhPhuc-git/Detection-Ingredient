@@ -56,6 +56,7 @@ def predict_model(request):
     suggest_recipe = []
     first = second = third = None
     
+    # Avoid empty page
     if request.method == "GET":
         first = view_recipe.random_Recipe()
         second = view_recipe.random_Recipe()
@@ -65,43 +66,53 @@ def predict_model(request):
             "recipe_Number": len(view_recipe.dsMonAn),
             "first": first, "second": second, "third": third,
         })
-        
+    # Xử lý
     if request.method == "POST" and request.FILES.get('image_upload'):
         try:
             file = request.FILES.get('image_upload')
             img = Image.open(file)
+            # Standardize image -> RGB
             if img.mode in ("RGBA", "P"):
                 img = img.convert("RGB")
             
             temp_path = f"temp_{file.name.split('.')[0]}.jpg"
             img.save(temp_path, "JPEG")
-
+            
+            # Call API Roboflow 
             raw_ingredients = roboflow_service.predict_image(temp_path)
             
+            # Delete file save after predict
             if os.path.exists(temp_path):
                 os.remove(temp_path)
-
+            
+            # Avoid empty page
             if not raw_ingredients:
                 suggest_recipe = list_recipe
                 first = view_recipe.random_Recipe()
                 second = view_recipe.random_Recipe()
                 third = view_recipe.random_Recipe()
             else:
+                # Standardize data
                 translated_ingredients = [translate_dict.get(name.strip(), name.strip()) for name in raw_ingredients]
                 
+                # Collect data
                 count_ingredient_vn = Counter(translated_ingredients)
 
                 unique_raw_ingredients = list(Counter(raw_ingredients).keys())
+                
+                # Push AI_Label to Session
+                request.session['ai_label'] = unique_raw_ingredients
+                
+                #Suggest Recipe
                 suggest_recipe = view_recipe.getRecipe_AI(unique_raw_ingredients)
                 
                 if len(suggest_recipe) >= 1: first = suggest_recipe[0]
                 if len(suggest_recipe) >= 2: second = suggest_recipe[1]
                 if len(suggest_recipe) >= 3: third = suggest_recipe[2]
-            
+                 
         except Exception as e:
             print(f"Error during prediction: {e}")
-            return redirect('predict_model')
-
+            
         return render(request, 'recipe.html', {
             "count_ingredient": dict(count_ingredient_vn), 
             "numberOf_ingredient": len(count_ingredient_vn),
@@ -110,31 +121,48 @@ def predict_model(request):
             "first": first, 
             "second": second, 
             "third": third,
-        })
+            })
+    # Avoid error from reload page
+    return redirect('predict_model')
         
 def food_view(request):
-
     list_Recipe = view_recipe.dsMonAn        
     
-    list_Recipe = translate_recipe_data(list_Recipe)
+    # Pull AI_Label from session
+    ai_ingredients = request.session.get('ai_label', [])
+        
     
-    get_Id = request.GET.get('id')    
-    main_recipe = next(filter(lambda r: r.id == str(get_Id), list_Recipe ),None)
-    
+    # Receive the main ID after click see details 
+    get_Id = request.GET.get('id')
+    main_recipe = next(filter(lambda r: r.id == str(get_Id), list_Recipe), None)
+            
     if not main_recipe:
         main_recipe = list_Recipe[0]
-         
-    paginator = Paginator(list_Recipe,8)
+
+    # Get Ingredient from main ID
+    recipe_ingredient = [i.strip().capitalize() for i in main_recipe.thanhPhan]
     
+    ai_detected = [i.strip().capitalize() for i in ai_ingredients]
+    
+    # Caculate the omission
+    missing_raw = [item for item in recipe_ingredient if item not in ai_detected]
+    missing = [translate_dict.get(item, item) for item in missing_raw]
+    
+    # Paginator with the list 8/page and get page number after change page
+    paginator = Paginator(list_Recipe, 8)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-        
-    return render(request, 'food.html',{
+    
+    # Translate ingredient in main ID
+    main_recipe.thanhPhan = [translate_dict.get(i.strip().capitalize(), i) for i in main_recipe.thanhPhan]
+    return render(request, 'food.html', {
         "page_obj": page_obj,
-        "main_recipe" : main_recipe,
-        "current_id": get_Id
+        "main_recipe": main_recipe,
+        "current_id": get_Id,
+        "missing": missing, 
     })
     
+# USELESS Maybe 
 def translate_recipe_data(recipe_list):
     for recipe in recipe_list:
         if hasattr(recipe, 'thanhPhan'):

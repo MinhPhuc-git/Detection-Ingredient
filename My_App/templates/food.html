@@ -36,21 +36,24 @@
                     </p>
                     <p class="detail"><span style="font-weight: bold;">Độ khó:</span> {{ main_recipe.doKho }} <i class="fa-solid fa-stopwatch" style="opacity: 60%;"></i> </p>
                     <p class="detail"><span style="font-weight: bold;">Thời gian:</span> {{ main_recipe.thoiGian }} <i class="fa-solid fa-chart-simple" style="opacity: 60%;"></i></p>
+                    {%if missing %}
+                    <p class="detail">Nguyên liệu còn thiếu: 
+                    <span style="color: red;">
+                    {%for item in missing%}    
+                        {{item}},
+                    {% endfor %}
+                    </span>
+                    </p>
+                    {% endif %}
                 </div>
             </div>
             <div id="content-footer">
                 <div class="text">
                     <h1 class="title">Cách chế biến: <span style="color: rgb(65, 139, 65);">{{main_recipe.tenMonAn}}</span></h1>
                     <ol>
-                        {%for ingredient in main_recipe.thanhPhan%}
-                        <li>{{ main_recipe.tenMonAn }}</li>
-                        <p>
-                            {%for salt in main_recipe.giaVi%}
-                            {{ salt }}
-                            {%endfor%}
-                        </p>
+                        {%for step in main_recipe.cheBien%}
+                        <li>{{ step }}</li>
                         {% endfor %}
-
                     </ol>
                 </div>
             </div>

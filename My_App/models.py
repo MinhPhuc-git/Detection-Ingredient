@@ -20,8 +20,9 @@ class RoboFlowService:
         self.model = self.project.version(2).model
     def predict_image(self, image_path):
         try:
-            result = self.model.predict(image_path, confidence=60).json()
+            result = self.model.predict(image_path, confidence=0.5).json()
             names = []
+            # Standardize data receive
             for prediction in result.get('predictions', []):
                 names.append(prediction['class'].capitalize())
             return names
@@ -29,29 +30,32 @@ class RoboFlowService:
             print(f"Error calling Roboflow API: {e}")
             return []
 class Recipe:
-    def __init__(self, ma, name_recipe, kind, ingredient, spice, difficulty, minute, name_img):
+    def __init__(self, ma, name_recipe, kind, ingredient, spice, difficulty, minute, name_img, cook):
         self.id = ma
         self.tenMonAn = name_recipe
         self.loaiMonAn = kind
         self.thanhPhan= [x.strip().capitalize() for x in ingredient.split(",")]
         self.giaVi = spice.split(",")
         self.doKho = difficulty
-        self.thoiGian = int(minute)
+        self.thoiGian = minute
         self.tenAnh = name_img
+        self.cheBien = cook.split(',')
         
 class RecipeManager:
     def __init__(self,path_csv):
         self.dsMonAn = []
         self.csv_path = path_csv
-        
+    # Load data into list   
     def load_data(self):
         with open(self.csv_path, "r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:
+                if not row.get('STT') or not row.get('Tên Món Ăn'):
+                    continue
                 monAn = Recipe(
                     row['STT'],row['Tên Món Ăn'],row['Loại Món'],
                     row['Nguyên Liệu Chính'], row['Gia vị & Nguyên liệu tăng hương vị'],
-                    row['Độ Khó'], row['Thời Gian (Phút)'], row['Hình ảnh'],
+                    row['Độ Khó'], row['Thời Gian (Phút)'], row['Hình ảnh'], row['Cách Chế Biến']
                     )
                 self.dsMonAn.append(monAn)
         return self.dsMonAn
@@ -59,6 +63,7 @@ class RecipeManager:
     def random_Recipe(self):
         return self.dsMonAn[randint(0,len(self.dsMonAn) - 1)]
     
+    # Suggest recipe after predict 
     def getRecipe_AI(self,aI_labels):
         ds_goi_Y = {}
         for i in self.dsMonAn:
