@@ -6,5 +6,6 @@ urlpatterns = [
     path('', views.index_view, name="index"),
     path('login/',views.login_view, name="login"),
     path('shop/recipe/',views.predict_model,name="predict_model"),
-    path('food',views.food_view,name="food")
+    path('food',views.food_view,name="food"),
+    path('add-ingredient/', views.add_ingredient, name='add_ingredient'),
 ]

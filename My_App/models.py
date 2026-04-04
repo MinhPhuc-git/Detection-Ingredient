@@ -30,7 +30,7 @@ class RoboFlowService:
             print(f"Error calling Roboflow API: {e}")
             return []
 class Recipe:
-    def __init__(self, ma, name_recipe, kind, ingredient, spice, difficulty, minute, name_img, cook):
+    def __init__(self, ma, name_recipe, kind, ingredient, spice, difficulty, minute, name_img, cook, numberIngredient, numbberSpice):
         self.id = ma
         self.tenMonAn = name_recipe
         self.loaiMonAn = kind
@@ -40,6 +40,8 @@ class Recipe:
         self.thoiGian = minute
         self.tenAnh = name_img
         self.cheBien = cook.split(',')
+        self.soLuongNguyenLieu = [x.strip().capitalize() for x in numberIngredient.split(',')]
+        self.soLuongGiaVi = [x.strip().capitalize()for x in numbberSpice.split(',')]
         
 class RecipeManager:
     def __init__(self,path_csv):
@@ -55,7 +57,8 @@ class RecipeManager:
                 monAn = Recipe(
                     row['STT'],row['Tên Món Ăn'],row['Loại Món'],
                     row['Nguyên Liệu Chính'], row['Gia vị & Nguyên liệu tăng hương vị'],
-                    row['Độ Khó'], row['Thời Gian (Phút)'], row['Hình ảnh'], row['Cách Chế Biến']
+                    row['Độ Khó'], row['Thời Gian (Phút)'], row['Hình ảnh'], row['Cách Chế Biến'],
+                    row['Nguyên Liệu Chính (Định lượng)'], row['Gia vị & Hương liệu'],
                     )
                 self.dsMonAn.append(monAn)
         return self.dsMonAn
@@ -75,7 +78,7 @@ class RecipeManager:
                 phanTram = (count / len(i.thanhPhan)) * 100
                 ds_goi_Y[i] = round(phanTram, 2)
         sorted_item = sorted(ds_goi_Y.items(), key=lambda item:item[1], reverse=True) 
-        return [item[0] for item in sorted_item]
+        return [item[0] for item in sorted_item], ds_goi_Y
                     
             
             

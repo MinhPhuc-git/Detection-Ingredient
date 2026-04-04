@@ -35,7 +35,7 @@
                     <label for="upload">
                         <div id="center">
                             <img src="{% static 'icon/camera.png'%}" alt="">
-                            <p class="row1">Hỗ trợ PNG,JPG (Tối đa 10MB)</p>
+                            <p class="row1">Hỗ trợ PNG,JPG,JPEG (Tối đa 10MB)</p>
                             <span class="row2">Chụp rõ các loại rau củ, thực phẩm
                             </span>
                         </div>
@@ -55,11 +55,18 @@
                     <div class="result">
                         {% for name, count in count_ingredient.items %}
                         <p>
-                            <img src="{% static 'icon/clock.png' %}" alt="">{{ name }} - {{ count }}
+                            <!-- <img src="{% static 'icon/clock.png' %}" alt=""> -->
+                            <span style="flex: 1;">{{ name }} - {{ count }}</span>
+
+                            <a href="?action=minus&name={{ name }}" style="color: rgb(0, 0, 0);">-</a>
+
+                            <a href="?action=plus&name={{ name }}" style="color: rgb(0, 0, 0);">+</a>
+
+                            <a href="?action=delete&name={{ name }}" style="color: rgb(0, 0, 0)">✕</a>
                         </p>
                         {% endfor %}
                     </div>
-                    <button>+ Thêm nguyên liệu thủ công</button>
+                    <button class="footer-btn" onclick="openIngredient()">+ Thêm nguyên liệu thủ công</button>
                 </div>
             </div>
             <div class="header-menu">
@@ -118,6 +125,39 @@
         </div>
         {% include 'footer.html'%}
     </div>
+    <div id="ingredient-modal">
+        <div class="modal-content">
+            <h2>Chọn nguyên liệu</h2>
+
+            <form method="POST" action="{% url 'add_ingredient' %}">
+                {% csrf_token %}
+
+                <div class="ingredient-grid">
+                    {% for item in ingredient_list %}
+                    <label class="ingredient-item">
+                        <!-- <img src="{% static 'icon/clock.png' %}">  -->
+                        <input type="checkbox" name="ingredients" value="{{ item }}">
+                        {{ item }}
+                    </label>
+                    {% endfor %}
+                </div>
+
+                <div class="modal-btn">
+                    <button type="submit">Xác nhận</button>
+                    <button type="button" onclick="closeIngredient()">Đóng</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
+<script>
+    function openIngredient() {
+        document.getElementById("ingredient-modal").style.display = "flex";
+    }
+
+    function closeIngredient() {
+        document.getElementById("ingredient-modal").style.display = "none";
+    }
+</script>
 
 </html>

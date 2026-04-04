@@ -24,15 +24,20 @@
                 <div id="content-right">
                     <h1 class="title">Thành phần</h1>
 
-                    <p class="detail"><span style="font-weight: bold;">Nguyên liệu:</span>
+                    <p class="detail"><span style="font-weight: bold;">Nguyên liệu chính:</span>
                         {%for ingredient in main_recipe.thanhPhan%}
-                        {{ingredient}}{{','}}
+                        {{ingredient}}
                         {% endfor %}
                     </p>
                     <p class="detail"><span style="font-weight: bold;">Gia vị:</span>
-                        {%for salt in main_recipe.giaVi%}
-                        {{ salt }} {{','}}
+                        {%for salt in main_recipe.soLuongGiaVi%}
+                        {{ salt }}
                         {%endfor%}
+                    </p>
+                    <p class="detail"><span style="font-weight: bold;">Định lượng:</span>
+                        {%for ingredient in main_recipe.soLuongNguyenLieu%}
+                        {{ingredient}}
+                        {% endfor %}
                     </p>
                     <p class="detail"><span style="font-weight: bold;">Độ khó:</span> {{ main_recipe.doKho }} <i class="fa-solid fa-stopwatch" style="opacity: 60%;"></i> </p>
                     <p class="detail"><span style="font-weight: bold;">Thời gian:</span> {{ main_recipe.thoiGian }} <i class="fa-solid fa-chart-simple" style="opacity: 60%;"></i></p>
@@ -40,7 +45,7 @@
                     <p class="detail">Nguyên liệu còn thiếu: 
                     <span style="color: red;">
                     {%for item in missing%}    
-                        {{item}},
+                        {{item}}
                     {% endfor %}
                     </span>
                     </p>
@@ -61,23 +66,23 @@
         </div>
         <div id="menu">
             <div class="button-container">
-                <button>Tất cả</button>
+                <!-- <button>Tất cả</button>
                 <button>Món mặn</button>
                 <button>Món chay</button>
                 <button>Canh</button>
-                <button>Gỏi</button>
+                <button>Gỏi</button> -->
             </div>
             <div class="filter-box">
-                <div class="left">
+                <!-- <div class="left">
 
                     <i class="fa-solid fa-filter"></i><label for="filter-select">Lọc theo:</label>
                     <select id="filter-select">
                         <option value="time">Thời gian</option>
                         <option value="name">Tên món</option>
                     </select>
-                </div>
+                </div> -->
                 <div class="right">
-                    <p>Hiển thị 24 công thức</p>
+                    <p>Hiển thị {{recipe_Number}} công thức</p>
                 </div>
             </div>
         </div>
