@@ -77,6 +77,7 @@ body {
     justify-content: center;
     margin-top: 55px;
     gap: 10%;
+    height: 700px;
 }
 
 #content a {
@@ -86,8 +87,8 @@ body {
 
 #content-screen {
     box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.3);
-    width: 705px;
-    height: 514px;
+    width: 800px;
+    height: 700px;
     border-radius: 30px;
     display: flex;
     flex-direction: column;
@@ -106,8 +107,8 @@ body {
 #content-screen #center {
     background-color: rgba(75, 238, 43, 0.05);
     margin: auto;
-    width: 539px;
-    height: 276px;
+    width: 639px;
+    height: 476px;
     display: flex;
     flex-direction: column;
     justify-content: center;

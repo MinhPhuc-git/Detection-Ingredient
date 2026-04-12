@@ -16,6 +16,9 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+
+
 model_path = BASE_DIR / "model/best_Ver2.pt"
 csv_path = BASE_DIR / "model/Dishes.csv"
 # Quick-start development settings - unsuitable for production

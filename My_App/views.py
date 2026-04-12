@@ -8,7 +8,7 @@ from My_App import models
 import csv
 from django.core.paginator import Paginator
 import os
-
+from django.conf import settings
 model_path = r"C:\Users\ASUS RogStrix\OneDrive\Desktop\ML-Recognize_Object-AI\model\best_Ver2.pt"
 csv_path = r"C:\Users\ASUS RogStrix\OneDrive\Desktop\ML-Recognize_Object-AI\model\Dishes.csv"
 # model = YOLO(model_path)
@@ -74,12 +74,12 @@ def predict_model(request):
     count_ingredient = {} 
     suggest_recipe = []
     first = second = third = None
-    
+    translate = {}
     # Avoid empty page
     if request.method == "GET":
         action = request.GET.get('action')
         name_ingredient_action = request.GET.get('name')
-        ai_ingredients = request.session.get('dict_ingredient', dict())         
+        ai_ingredients = request.session.get('dict_ingredient', dict())      
         
         if not action: 
             first = view_recipe.random_Recipe()
@@ -94,7 +94,6 @@ def predict_model(request):
 
             })
         else:
-            # Map ngược từ Tiếng Việt sang Tiếng Anh để xử lý logic xóa/sửa nếu cần
             reverse_translate = {v: k for k, v in translate_dict.items()}
             eng_name = reverse_translate.get(name_ingredient_action, name_ingredient_action)
 
@@ -152,69 +151,69 @@ def predict_model(request):
         try:
             file = request.FILES.get('image_upload')
             img = Image.open(file)
-            # Standardize image -> RGB
+            
             if img.mode in ("RGBA", "P"):
                 img = img.convert("RGB")
             
             temp_path = f"temp_{file.name.split('.')[0]}.jpg"
             img.save(temp_path, "JPEG")
             
-            # Call API Roboflow 
-            raw_ingredients = roboflow_service.predict_image(temp_path)
-
-            # Delete file save after predict
+            save_path = os.path.join(r"C:\Users\ASUS RogStrix\OneDrive\Desktop\ML-Recognize_Object-AI\ML_Food\My_App\static", 'detected_images')
+            
+            raw_ingredients, result, predictions = roboflow_service.predict_image(temp_path)
+            
+            image_with_boxes = None
+            if predictions:
+                image_with_boxes = roboflow_service.draw_boxes_on_image(temp_path, predictions, save_path)
+            
+        except Exception as e:
+            print(f"Error during prediction: {e}")
+            raw_ingredients = []
+            result = {}
+            predictions = []
+            image_with_boxes = None
+        
+        finally:
             if os.path.exists(temp_path):
                 os.remove(temp_path)
             
-            # Avoid empty page
-            if not raw_ingredients:
-                suggest_recipe = list_recipe
-                first = view_recipe.random_Recipe()
-                second = view_recipe.random_Recipe()
-                third = view_recipe.random_Recipe()
-                translate = {}
-            else:
-                # Capitalize after predict
-                capitalized_ingredients = [name.strip().capitalize() for name in raw_ingredients]
-                
-                # Collect data
-                count_ingredient = Counter(capitalized_ingredients)
-                unique_ingredients = list(count_ingredient.keys())
-                
-                # Translate vietnamese
-                # translate = dict(count_ingredient)
-                translate = {translate_dict.get(i, i) : count for i, count in count_ingredient.items()}
-                
-                
-                request.session['dict_ingredient'] = dict(count_ingredient)
-                # Push AI_Label to Session (English & Capitalized)
-                request.session['ai_label'] = unique_ingredients
-                
-                #Suggest Recipe
-                suggest_recipe,full_list_Recipe = view_recipe.getRecipe_AI(unique_ingredients)
-                request.session['suggested_ids'] = [str(r.id) for r in suggest_recipe]
-                
-                if len(suggest_recipe) >= 1: first = suggest_recipe[0]
-                if len(suggest_recipe) >= 2: second = suggest_recipe[1]
-                if len(suggest_recipe) >= 3: third = suggest_recipe[2]
-                 
-        except Exception as e:
-            print(f"Error during prediction: {e}")
+        if not raw_ingredients:
+            suggest_recipe = list_recipe
+            first = view_recipe.random_Recipe()
+            second = view_recipe.random_Recipe()
+            third = view_recipe.random_Recipe()
+            translate = {}
+        else:
+            capitalized_ingredients = [name.strip().capitalize() for name in raw_ingredients]
+            count_ingredient = Counter(capitalized_ingredients)
+            unique_ingredients = list(count_ingredient.keys())
             
+            translate = {translate_dict.get(i, i): count for i, count in count_ingredient.items()}
+            
+            request.session['dict_ingredient'] = dict(count_ingredient)
+            request.session['ai_label'] = unique_ingredients
+            
+            suggest_recipe, full_list_Recipe = view_recipe.getRecipe_AI(unique_ingredients)
+            request.session['suggested_ids'] = [str(r.id) for r in suggest_recipe]
+            
+            if len(suggest_recipe) >= 1: first = suggest_recipe[0]
+            if len(suggest_recipe) >= 2: second = suggest_recipe[1]
+            if len(suggest_recipe) >= 3: third = suggest_recipe[2]
+        
         return render(request, 'recipe.html', {
-            "count_ingredient": translate, 
-            "numberOf_ingredient": len(count_ingredient) if 'count_ingredient' in locals() else 0,
+            "count_ingredient": translate,
+            "numberOf_ingredient": len(count_ingredient) if count_ingredient else 0,
             "suggest_recipe": suggest_recipe,
             "recipe_Number": len(suggest_recipe),
             "first": first, 
             "second": second, 
             "third": third,
-            "ingredient_list": ingredient_list
-            
-            })
+            "ingredient_list": ingredient_list,
+            "image_dection": image_with_boxes,
+        })
+    
     # Avoid error from reload page
     return redirect('predict_model')
-
 
 def food_view(request):
     list_Recipe = view_recipe.dsMonAn        

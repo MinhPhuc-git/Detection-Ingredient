@@ -22,7 +22,7 @@
                     <h2>Smart Cooking</h2>
                     <h1>Nấu ăn thông minh cùng<br><span style="color:  rgba(75, 238, 43, 1);">AI Chef</span></h1>
                     <p>Hướng dẫn nấu ăn dựa vào các nguyên liệu có sẵn của bạn</p>
-                    <button>Bắt đầu ngay</button>
+                    <a href="#content-model" style="text-decoration: none;"><button>Bắt đầu ngay</button></a>
                 </div>
             </div>
             <div id="content-model">
@@ -34,10 +34,14 @@
                     </div>
                     <label for="upload">
                         <div id="center">
+                            {% if image_dection %}
+                            <img src="{% static 'detected_images/' %}{{ image_dection }}" style="width: 639px; height: 476px; border-radius: 20px; display: flex; justify-content: center;" >
+                            {% else %}
                             <img src="{% static 'icon/camera.png'%}" alt="">
                             <p class="row1">Hỗ trợ PNG,JPG,JPEG (Tối đa 10MB)</p>
                             <span class="row2">Chụp rõ các loại rau củ, thực phẩm
                             </span>
+                            {% endif %}
                         </div>
                     </label>
                 </div>

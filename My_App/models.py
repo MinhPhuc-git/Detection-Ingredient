@@ -2,10 +2,10 @@ from django.db import models
 import csv
 from random import randint
 
+import cv2
 import os
 from dotenv import load_dotenv
 from roboflow import Roboflow
-
 load_dotenv()
 
 class RoboFlowService:
@@ -21,14 +21,53 @@ class RoboFlowService:
     def predict_image(self, image_path):
         try:
             result = self.model.predict(image_path, confidence=0.5).json()
-            names = []
+            names = []       
+            predictions = []
+
             # Standardize data receive
             for prediction in result.get('predictions', []):
                 names.append(prediction['class'].capitalize())
-            return names
+                predictions.append({
+                    'class': prediction['class'].capitalize(),
+                    'confidence': prediction.get('confidence', 0),
+                    'x': prediction.get('x', 0),
+                    'y': prediction.get('y', 0),
+                    'width': prediction.get('width', 0),
+                    'height': prediction.get('height', 0)
+                })
+            return names, result, predictions
         except Exception as e:
             print(f"Error calling Roboflow API: {e}")
-            return []
+            return [],{},[]
+    def draw_boxes_on_image(self, image_path, predictions, save_path):
+        img = cv2.imread(image_path)
+        if img is None:
+            return None
+        
+        for pred in predictions:
+            x = int(pred['x'])
+            y = int(pred['y'])
+            width = int(pred['width'])
+            height = int(pred['height'])
+            
+            x1 = x - width // 2
+            y1 = y - height // 2
+            x2 = x + width // 2
+            y2 = y + height // 2
+            
+            cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            
+            label = f"{pred['class']} ({pred['confidence']:.2f})"
+            cv2.putText(img, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 
+                    0.5, (0, 255, 0), 2)
+        
+        os.makedirs(save_path, exist_ok=True)
+        
+        filename = os.path.basename(image_path).replace('.jpg', '_detected.jpg')
+        output_path = os.path.join(save_path, filename)
+        
+        cv2.imwrite(output_path, img)
+        return filename
 class Recipe:
     def __init__(self, ma, name_recipe, kind, ingredient, spice, difficulty, minute, name_img, cook, numberIngredient, numbberSpice):
         self.id = ma
